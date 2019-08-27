@@ -1,0 +1,63 @@
+20190827 上午8:11
+现在有点不可思议，我需要知道哪里出问题了。
+当我把bert设置为traiable之后，只用了128的长度，竟然达到了loss: 0.7510 - acc: 0.9496 - macro_f1: 0.9187 - val_loss: 0.0495 - val_acc: 0.9811 - val_macro_f1: 0.9679
+好像还在不断提升。我猜测过拟合了，。但是验证集的提升让我不寒而栗。之前最多也就到0.75的验证集。而且证明验证集的准确率与线上是一致的。
+对于这个结果，我会提交一版结果，看看差异是多少。
+这是验证集的分割：
+train_data = train_data_df[['content', 'label']].values
+np.random.seed(1)
+np.random.shuffle(train_data)
+train_data = [train_data[i] for i, j in enumerate(train_data) if i % 7 != 0]
+valid_data = [train_data[i] for i, j in enumerate(train_data) if i % 7 == 0]
+
+终于开始下降了，从0.98降下来到回到0。96了。
+按说现在只使用了128长度，有大量信息没能用上。当然，title的信息是最重要的，使用上了。
+验证集回到了0.99..我尼玛！ 我这线下验证哪里出问题了。。
+我项，如果线下0.99，线上0.8即使提升了，我也是不高兴的。因为不一致，没法指导后续的模型调研。
+
+197/197 [==============================] - 80s 404ms/step - loss: 3.8494 - acc: 0.7230 - macro_f1: 0.6008 - val_loss: 0.4778 - val_acc: 0.7976 - val_macro_f1: 0.7219
+Epoch 2/20
+197/197 [==============================] - 67s 341ms/step - loss: 2.3739 - acc: 0.8226 - macro_f1: 0.7474 - val_loss: 0.3286 - val_acc: 0.8754 - val_macro_f1: 0.8042
+Epoch 3/20
+197/197 [==============================] - 70s 354ms/step - loss: 2.0171 - acc: 0.8516 - macro_f1: 0.7926 - val_loss: 0.2762 - val_acc: 0.8888 - val_macro_f1: 0.8546
+Epoch 4/20
+197/197 [==============================] - 74s 375ms/step - loss: 1.5621 - acc: 0.8853 - macro_f1: 0.8252 - val_loss: 0.1803 - val_acc: 0.9321 - val_macro_f1: 0.8981
+Epoch 5/20
+197/197 [==============================] - 71s 362ms/step - loss: 1.2391 - acc: 0.9124 - macro_f1: 0.8636 - val_loss: 0.1450 - val_acc: 0.9477 - val_macro_f1: 0.9269
+Epoch 6/20
+197/197 [==============================] - 68s 346ms/step - loss: 1.0271 - acc: 0.9259 - macro_f1: 0.8835 - val_loss: 0.0977 - val_acc: 0.9644 - val_macro_f1: 0.9458
+Epoch 7/20
+197/197 [==============================] - 69s 352ms/step - loss: 0.7510 - acc: 0.9496 - macro_f1: 0.9187 - val_loss: 0.0495 - val_acc: 0.9811 - val_macro_f1: 0.9679
+Epoch 8/20
+197/197 [==============================] - 70s 353ms/step - loss: 0.5483 - acc: 0.9659 - macro_f1: 0.9403 - val_loss: 0.0298 - val_acc: 0.9900 - val_macro_f1: 0.9817
+Epoch 9/20
+197/197 [==============================] - 69s 352ms/step - loss: 0.4868 - acc: 0.9662 - macro_f1: 0.9473 - val_loss: 0.0402 - val_acc: 0.9833 - val_macro_f1: 0.9646
+Epoch 10/20
+197/197 [==============================] - 69s 352ms/step - loss: 0.3409 - acc: 0.9810 - macro_f1: 0.9592 - val_loss: 0.0220 - val_acc: 0.9944 - val_macro_f1: 0.9888
+Epoch 11/20
+197/197 [==============================] - 71s 360ms/step - loss: 0.2943 - acc: 0.9826 - macro_f1: 0.9642 - val_loss: 0.0093 - val_acc: 0.9967 - val_macro_f1: 0.9961
+Epoch 12/20
+197/197 [==============================] - 72s 364ms/step - loss: 0.2311 - acc: 0.9843 - macro_f1: 0.9679 - val_loss: 0.0105 - val_acc: 0.9978 - val_macro_f1: 0.9970
+Epoch 13/20
+197/197 [==============================] - 72s 367ms/step - loss: 0.1465 - acc: 0.9916 - macro_f1: 0.9756 - val_loss: 0.0076 - val_acc: 0.9978 - val_macro_f1: 0.9940
+Epoch 14/20
+197/197 [==============================] - 77s 389ms/step - loss: 0.1448 - acc: 0.9919 - macro_f1: 0.9788 - val_loss: 0.0144 - val_acc: 0.9967 - val_macro_f1: 0.9712
+Epoch 15/20
+197/197 [==============================] - 76s 384ms/step - loss: 0.1709 - acc: 0.9898 - macro_f1: 0.9750 - val_loss: 0.0146 - val_acc: 0.9956 - val_macro_f1: 0.9827
+Epoch 16/20
+197/197 [==============================] - 76s 388ms/step - loss: 0.1288 - acc: 0.9925 - macro_f1: 0.9735 - val_loss: 0.0057 - val_acc: 0.9989 - val_macro_f1: 0.9743
+Epoch 17/20
+197/197 [==============================] - 76s 388ms/step - loss: 0.1101 - acc: 0.9924 - macro_f1: 0.9798 - val_loss: 0.0015 - val_acc: 1.0000 - val_macro_f1: 0.9988
+Epoch 18/20
+197/197 [==============================] - 76s 387ms/step - loss: 0.1887 - acc: 0.9894 - macro_f1: 0.9797 - val_loss: 0.0056 - val_acc: 0.9989 - val_macro_f1: 0.9732
+Epoch 19/20
+197/197 [==============================] - 77s 390ms/step - loss: 0.1202 - acc: 0.9933 - macro_f1: 0.9866 - val_loss: 0.0084 - val_acc: 0.9978 - val_macro_f1: 0.9950
+Epoch 20/20
+197/197 [==============================] - 77s 389ms/step - loss: 0.0703 - acc: 0.9959 - macro_f1: 0.9891 - val_loss: 0.0105 - val_acc: 0.9967 - val_macro_f1: 0.9960
+
+
+看一下测试集合能有多少准确率：
+
+0.77916747000
+
+升高了不少！，下一步，做好验证集和测试集的一致性。

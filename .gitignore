@@ -1,0 +1,5 @@
+bert*.txt
+*.pyc
+*.idea
+*.csv
+data/
